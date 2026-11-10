@@ -1,0 +1,177 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .profile-page {
+        padding: 30px 6%;
+        min-height: 80vh;
+    }
+
+    .page-heading {
+        margin-bottom: 25px;
+    }
+
+    .page-heading h1 {
+        color: #283779;
+        margin-bottom: 8px;
+    }
+
+    .page-heading p {
+        color: #666;
+    }
+
+    .profile-container {
+        max-width: 800px;
+        margin: auto;
+        background: #FFFFFF;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .profile-section {
+        margin-bottom: 30px;
+    }
+
+    .profile-section h2 {
+        color: #283779;
+        font-size: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 20px;
+    }
+
+    .profile-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 22px;
+    }
+
+    .detail p {
+        color: #777;
+        font-size: 14px;
+        margin: 0 0 7px;
+    }
+
+    .detail h4 {
+        color: #333;
+        font-size: 16px;
+        margin: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .address {
+        grid-column: 1 / -1;
+    }
+
+    .edit-btn {
+        display: inline-block;
+        background: #283779;
+        color: white;
+        text-decoration: none;
+        padding: 11px 25px;
+        border-radius: 6px;
+        margin-top: 10px;
+    }
+
+    .edit-btn:hover {
+        background: #2e4b93;
+    }
+
+    @media (max-width: 600px) {
+        .profile-page {
+            padding: 20px 4%;
+        }
+
+        .profile-container {
+            padding: 20px;
+        }
+
+        .profile-details {
+            grid-template-columns: 1fr;
+        }
+
+        .address {
+            grid-column: auto;
+        }
+    }
+</style>
+
+
+<div class="profile-page">
+
+  <div class="page-heading">
+    <h1>My Profile</h1>
+    <p>View and manage your personal information.</p>
+  </div>
+
+
+  <div class="profile-container">
+
+     <!-- Account Information -->
+
+    <div class="profile-section">
+
+      <h2>Account Information</h2>
+
+      <div class="profile-details">
+
+        <div class="detail">
+          <p>Username</p>
+          <h4>{{ request.user.username }}</h4>
+        </div>
+
+        <div class="detail">
+          <p>Email Address</p>
+          <h4>{{ request.user.email }}</h4>
+        </div>
+
+      </div>
+
+  </div>
+
+
+        <!-- Student Information -->
+
+  <div class="profile-section">
+
+    <h2>Student Information</h2>
+
+    <div class="profile-details">
+
+      <div class="detail">
+          <p>Phone Number</p>
+          <h4>{{ profile.phone }}</h4>
+      </div>
+
+      <div class="detail">
+          <p>Department</p>
+          <h4>{{ profile.department }}</h4>
+      </div>
+
+      <div class="detail">
+          <p>Academic Year</p>
+          <h4>{{ profile.academic_year }}</h4>
+      </div>
+
+      <div class="detail address">
+          <p>Address</p>
+          <h4>{{ profile.address|linebreaksbr }}</h4>
+      </div>
+
+     </div>
+
+  </div>
+
+
+  <a href="{% url 'edit_profile' %}" class="edit-btn">
+      Edit Profile
+  </a>
+
+  </div>
+
+</div>
+
+{% endblock %}

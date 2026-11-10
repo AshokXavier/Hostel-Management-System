@@ -1,0 +1,290 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .bookings-page {
+        padding: 30px 6%;
+        min-height: 80vh;
+    }
+
+    .page-heading {
+        margin-bottom: 30px;
+    }
+
+    .page-heading h1 {
+        color: #283779;
+        margin-bottom: 8px;
+    }
+
+    .page-heading p {
+        color: #666;
+    }
+
+    .booking-section {
+        background: #FFFFFF;
+        padding: 25px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .booking-section h2 {
+        color: #283779;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+
+    .booking-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 22px;
+    }
+
+    .detail p {
+        color: #777;
+        font-size: 14px;
+        margin: 0 0 6px;
+    }
+
+    .detail h4 {
+        color: #283779;
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .approved {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .rejected {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .completed {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .empty-message {
+        text-align: center;
+        padding: 25px 10px;
+        color: #666;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 650px;
+    }
+
+    th, td {
+        padding: 14px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+
+    th {
+        background: #F1F5F9;
+        color: #283779;
+    }
+
+    td {
+        color: #555;
+        font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+        .bookings-page {
+            padding: 20px 4%;
+        }
+
+        .booking-details {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+
+<div class="bookings-page">
+
+    <div class="page-heading">
+        <h1>My Bookings</h1>
+        <p>Track your current booking and view your previous booking history.</p>
+    </div>
+
+
+    <!-- Current Booking -->
+
+    <div class="booking-section">
+
+      <h2>Current Booking</h2>
+
+      {% if current_booking %}
+
+        <div class="booking-details">
+
+          <div class="detail">
+              <p>Requested Room Type</p>
+              <h4>{{ current_booking.get_requested_room_type_display }}</h4>
+          </div>
+
+          <div class="detail">
+              <p>Room Number</p>
+               <h4>
+                  {% if current_booking.room %}
+                      {{ current_booking.room.room_number }}
+                  {% else %}
+                      Not allocated yet
+                  {% endif %}
+                 </h4>
+          </div>
+
+          <div class="detail">
+              <p>Booking Date</p>
+              <h4>{{ current_booking.requested_date|date:"d M Y" }}</h4>
+          </div>
+
+          <div class="detail">
+              <p>Allocation Date</p>
+              <h4>
+                  {{ current_booking.allocated_date|date:"d M Y"|default:"Not allocated yet" }}
+              </h4>
+          </div>
+
+          <div class="detail">
+              <p>Monthly Rent</p>
+              <h4>
+                  {% if current_booking.monthly_rate_at_allocation %}
+                      ₹{{ current_booking.monthly_rate_at_allocation }}
+                  {% else %}
+                      Not available yet
+                  {% endif %}
+              </h4>
+          </div>
+
+          <div class="detail">
+              <p>Booking Status</p>
+              <h4>
+                  <span class="status {{ current_booking.status }}">
+                      {{ current_booking.get_status_display }}
+                  </span>
+              </h4>
+          </div>
+
+        </div>
+
+        {% else %}
+
+            <div class="empty-message">
+                <p>You don't have any current bookings.</p>
+                <a href="{% url 'rooms' %}">Explore Rooms</a>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- Booking History -->
+
+    <div class="booking-section">
+
+      <h2>Booking History</h2>
+
+      {% if booking_history %}
+
+        <div class="table-container">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Room Type</th>
+                <th>Room Number</th>
+                <th>Booking Date</th>
+                <th>Allocation Date</th>
+                <th>Vacated Date</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+              {% for booking in booking_history %}
+
+                <tr>
+
+                  <td>
+                      {{ booking.get_requested_room_type_display }}
+                  </td>
+
+                  <td>
+                    {% if booking.room %}
+                        {{ booking.room.room_number }}
+                    {% else %}
+                        --
+                    {% endif %}
+                  </td>
+
+                  <td>
+                      {{ booking.requested_date|date:"d M Y" }}
+                  </td>
+
+                  <td>
+                      {{ booking.allocated_date|date:"d M Y"|default:"--" }}
+                  </td>
+
+                  <td>
+                      {{ booking.vacated_date|date:"d M Y"|default:"--" }}
+                  </td>
+
+                  <td>
+                      <span class="status {{ booking.status }}">
+                          {{ booking.get_status_display }}
+                      </span>
+                  </td>
+
+                </tr>
+
+              {% endfor %}
+
+            </tbody>
+
+            </table>
+
+          </div>
+
+        {% else %}
+
+            <div class="empty-message">
+                <p>No previous booking history available.</p>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

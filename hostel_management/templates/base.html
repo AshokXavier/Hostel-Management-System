@@ -1,0 +1,244 @@
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stay Mate</title>
+
+<style>
+    body {
+        margin: 0;
+        background-color: #F1F5F9;
+        color: #283779;
+    }
+
+    .header {
+        background-color: #283779;
+        color: white;
+        padding: 12px 25px;
+    }
+
+    /* Header title and tagline */
+
+    .top {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: nowrap;
+    }
+
+    .top h1 {
+        margin: 0;
+        font-size: 36px;
+        white-space: nowrap;
+    }
+
+    .top p {
+        margin: 0;
+        font-size: 18px;
+        white-space: nowrap;
+    }
+
+    /* Navigation */
+
+    .bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+    }
+
+    .left {
+        display: flex;
+        align-items: center;
+        gap: 55px;
+    }
+
+    .left a {
+        color: white;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .left a:hover {
+        color: #38BDF8;
+    }
+
+    /* Logout button */
+
+    .left form {
+        margin: 0;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .left .logout-btn {
+        background-color: transparent;
+        color: #FFFFFF;
+        border: 1px solid #FFFFFF;
+        padding: 9px 20px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.3s ease;
+    }
+
+    .left .logout-btn:hover {
+        background-color: #FFFFFF;
+        color: #283779;
+    }
+
+    /* Student / Admin / Guest button */
+
+    .right button {
+        font-size: 15px;
+        border-radius: 25px;
+        border: 1px solid #819AC3;
+        color: white;
+        background-color: #819AC3;
+        padding: 10px 30px;
+        white-space: nowrap;
+    }
+
+    /* Footer */
+
+    .footer {
+        background-color: #283779;
+        color: white;
+        text-align: center;
+        padding: 10px;
+    }
+
+    /* Responsive */
+
+    @media (max-width: 900px) {
+        .left {
+            gap: 25px;
+        }
+
+        .top h1 {
+            font-size: 30px;
+        }
+
+        .top p {
+            font-size: 16px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .header {
+            padding: 12px 15px;
+        }
+
+        .top {
+            flex-wrap: wrap;
+            gap: 5px 10px;
+        }
+
+        .top h1 {
+            font-size: 26px;
+        }
+
+        .top p {
+            font-size: 14px;
+        }
+
+        .bottom {
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .left {
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+    }
+
+</style>
+</head>
+
+<body>
+
+  <div class="header">
+
+    <div class="top">
+      <h1>STAY MATE -</h1>
+      <p>A companion for hostel residents</p>
+    </div>
+
+    <div class="bottom">
+
+      <div class="left">
+
+        {% if user.is_authenticated %}
+
+          {% if user.is_staff %}
+
+            <!-- Admin Navigation -->
+
+            <a href="{% url 'admin_dashboard' %}">Dashboard</a>
+            <a href="{% url 'admin_rooms' %}">Rooms</a>
+            <a href="{% url 'admin_students' %}">Students</a>
+            <a href="{% url 'admin_bookings' %}">Bookings</a>
+
+          {% else %}
+
+            <!-- Student Navigation -->
+
+            <a href="{% url 'student_dashboard' %}">Home</a>
+            <a href="{% url 'rooms' %}">Rooms</a>
+            <a href="{% url 'my_bookings' %}">My Bookings</a>
+            <a href="{% url 'my_profile' %}">My Profile</a>
+
+          {% endif %}
+
+          <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Logout</button>
+          </form>
+
+        {% else %}
+
+          <!-- Guest Navigation -->
+
+          <a href="{% url 'home' %}">Home</a>
+          <a href="{% url 'login' %}">Login</a>
+          <a href="{% url 'register' %}">Register</a>
+
+        {% endif %}
+
+      </div>
+
+      <div class="right">
+
+        {% if user.is_authenticated %}
+
+          {% if user.is_staff %}
+            <button>Admin</button>
+          {% else %}
+            <button>Student</button>
+          {% endif %}
+
+        {% else %}
+
+          <button>Guest</button>
+
+        {% endif %}
+
+      </div>
+
+    </div>
+
+  </div>
+
+  {% block content %}
+  {% endblock %}
+
+  <div class="footer">
+    <p>2026 Stay Mate</p>
+  </div>
+
+</body>
+</html>

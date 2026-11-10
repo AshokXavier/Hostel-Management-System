@@ -1,0 +1,819 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .bookings-page {
+        padding: 30px 4%;
+        background: #F1F5F9;
+        min-height: 85vh;
+    }
+
+    .page-heading {
+        margin-bottom: 25px;
+    }
+
+    .page-heading h1 {
+        color: #283779;
+        font-size: 28px;
+        margin-bottom: 6px;
+    }
+
+    .page-heading p {
+        color: #64748B;
+        margin: 0;
+    }
+
+    /* Statistics */
+
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin-bottom: 25px;
+    }
+
+    .stat-card {
+        background: #FFFFFF;
+        padding: 22px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border-left: 4px solid #283779;
+    }
+
+    .stat-card h3 {
+        font-size: 14px;
+        color: #64748B;
+        margin-bottom: 12px;
+        font-weight: 500;
+    }
+
+    .stat-card h2 {
+        font-size: 27px;
+        color: #283779;
+        margin: 0;
+    }
+
+    /* Filters */
+
+    .filter-container {
+        background: #FFFFFF;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 22px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .filter-container input,
+    .filter-container select {
+        padding: 11px 13px;
+        border: 1px solid #CBD5E1;
+        border-radius: 6px;
+        font-size: 14px;
+        outline: none;
+        background: #FFFFFF;
+    }
+
+    .filter-container input {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .filter-container input:focus,
+    .filter-container select:focus {
+        border-color: #283779;
+    }
+
+    .filter-btn {
+        background: #283779;
+        color: white;
+        padding: 11px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .filter-btn:hover {
+        background: #2e4b93;
+    }
+
+    .reset-btn {
+        background: #E2E8F0;
+        color: #334155;
+        padding: 11px 18px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .reset-btn:hover {
+        background: #CBD5E1;
+    }
+
+    /* Booking table */
+
+    .table-container {
+        background: #FFFFFF;
+        padding: 22px;
+        border-radius: 10px;
+        overflow-x: auto;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .table-heading {
+        color: #283779;
+        font-size: 19px;
+        margin-bottom: 18px;
+    }
+
+    .bookings-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 850px;
+    }
+
+    .bookings-table th {
+        background: #F1F5F9;
+        color: #475569;
+        text-align: left;
+        padding: 14px 12px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .bookings-table td {
+        padding: 15px 12px;
+        border-bottom: 1px solid #E2E8F0;
+        color: #334155;
+        font-size: 14px;
+    }
+
+    .bookings-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .bookings-table tbody tr:hover {
+        background: #F8FAFC;
+    }
+
+    .student-name {
+        color: #283779;
+        font-weight: 600;
+    }
+
+    /* Status badges */
+
+    .status {
+        display: inline-block;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-pending {
+        background: #FEF3C7;
+        color: #92400E;
+    }
+
+    .status-approved {
+        background: #DCFCE7;
+        color: #166534;
+    }
+
+    .status-rejected {
+        background: #FEE2E2;
+        color: #991B1B;
+    }
+
+    .status-completed {
+        background: #DBEAFE;
+        color: #1E40AF;
+    }
+
+    .view-btn {
+        background: #283779;
+        color: white;
+        padding: 7px 12px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .view-btn:hover {
+        background: #2e4b93;
+    }
+
+    .empty-message {
+        text-align: center;
+        padding: 30px;
+        color: #64748B;
+    }
+
+    @media (max-width: 900px) {
+        .stats-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 600px) {
+        .bookings-page {
+            padding: 20px 4%;
+        }
+
+        .filter-container {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .filter-container input,
+        .filter-container select {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+
+    /* Action buttons */
+
+.action-cell {
+    min-width: 150px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.approve-btn,
+.reject-btn,
+.allocate-btn {
+    border: none;
+    padding: 8px 11px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    color: white;
+}
+
+.approve-btn {
+    background: #15803D;
+}
+
+.approve-btn:hover {
+    background: #166534;
+}
+
+.reject-btn {
+    background: #DC2626;
+}
+
+.reject-btn:hover {
+    background: #B91C1C;
+}
+
+.allocate-btn {
+    background: #283779;
+}
+
+.allocate-btn:hover {
+    background: #2e4b93;
+}
+
+.allocated-room {
+    color: #166534;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.no-action {
+    color: #94A3B8;
+}
+
+/* Allocation popup */
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.modal-box {
+    background: #FFFFFF;
+    width: 100%;
+    max-width: 430px;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.modal-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-heading h2 {
+    color: #283779;
+    font-size: 21px;
+    margin: 0;
+}
+
+.close-btn {
+    border: none;
+    background: none;
+    font-size: 27px;
+    cursor: pointer;
+    color: #64748B;
+}
+
+.modal-description {
+    color: #64748B;
+    font-size: 14px;
+    margin: 15px 0 22px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.form-group select,
+.form-group input {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+    outline: none;
+    border-color: #283779;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.cancel-btn,
+.confirm-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    background: #E2E8F0;
+    color: #334155;
+}
+
+.confirm-btn {
+    background: #283779;
+    color: white;
+}
+
+.confirm-btn:hover {
+    background: #2e4b93;
+}
+.complete-btn {
+    background: #2563EB;
+    color: white;
+    border: none;
+    padding: 8px 11px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.complete-btn:hover {
+    background: #1D4ED8;
+}
+
+</style>
+
+
+<div class="bookings-page">
+
+    <!-- Page Heading -->
+
+    <div class="page-heading">
+        <h1>Bookings Management</h1>
+        <p>View and manage student accommodation requests.</p>
+    </div>
+
+
+    <!-- Statistics Cards -->
+
+    <div class="stats-container">
+
+        <div class="stat-card">
+            <h3>Total Requests</h3>
+            <h2>{{ total_bookings }}</h2>
+        </div>
+
+        <div class="stat-card">
+            <h3>Pending Requests</h3>
+            <h2>{{ pending_bookings }}</h2>
+        </div>
+
+        <div class="stat-card">
+            <h3>Approved Requests</h3>
+            <h2>{{ approved_bookings }}</h2>
+        </div>
+
+        <div class="stat-card">
+            <h3>Rejected Requests</h3>
+            <h2>{{ rejected_bookings }}</h2>
+        </div>
+
+    </div>
+
+
+    <!-- Search and Filters -->
+
+    <form method="GET" class="filter-container">
+
+        <input
+            type="text"
+            name="search"
+            placeholder="Search by student name, username, email or room number..."
+            value="{{ search_query }}"
+        >
+
+        <select name="status">
+
+            <option value="">All Statuses</option>
+
+            {% for value, label in status_choices %}
+                <option value="{{ value }}"
+                    {% if selected_status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+
+        </select>
+
+
+        <select name="room_type">
+
+            <option value="">All Room Types</option>
+
+            {% for value, label in room_types %}
+                <option value="{{ value }}"
+                    {% if selected_room_type == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+
+        </select>
+
+        <button type="submit" class="filter-btn">
+            Apply
+        </button>
+
+        <a href="{% url 'admin_bookings' %}" class="reset-btn">
+            Reset
+        </a>
+
+    </form>
+
+
+    <!-- Bookings Table -->
+
+    <div class="table-container">
+
+        <h3 class="table-heading">All Booking Requests</h3>
+
+        <table class="bookings-table">
+
+            <thead>
+                <tr>
+                    <th>Sl. No.</th>
+                    <th>Student</th>
+                    <th>Department</th>
+                    <th>Requested Room Type</th>
+                    <th>Allocated Room</th>
+                    <th>Requested Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+
+<tbody>
+
+    {% for booking in bookings %}
+
+        <tr>
+
+            <td>{{ forloop.counter }}</td>
+
+            <td>
+                <span class="student-name">
+                    {{ booking.student.user.get_full_name|default:booking.student.user.username }}
+                </span>
+            </td>
+
+            <td>{{ booking.student.department }}</td>
+
+            <td>
+                {{ booking.get_requested_room_type_display }}
+            </td>
+
+            <td>
+                {% if booking.room %}
+                    {{ booking.room.room_number }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+
+            <td>
+                {{ booking.requested_date|date:"d M Y" }}
+            </td>
+
+            <td>
+
+                {% if booking.status == 'pending' %}
+                    <span class="status status-pending">
+                        Pending
+                    </span>
+
+                {% elif booking.status == 'approved' %}
+                    <span class="status status-approved">
+                        Approved
+                    </span>
+
+                {% elif booking.status == 'rejected' %}
+                    <span class="status status-rejected">
+                        Rejected
+                    </span>
+
+                {% else %}
+                    <span class="status status-completed">
+                        Completed
+                    </span>
+                {% endif %}
+
+            </td>
+
+            <!-- Action Column -->
+
+            <td class="action-cell">
+
+                {% if booking.status == 'pending' %}
+
+                    <div class="action-buttons">
+
+                        <form method="POST"
+                              action="{% url 'approve_booking' booking.id %}">
+                            {% csrf_token %}
+
+                            <button type="submit" class="approve-btn">
+                                Approve
+                            </button>
+                        </form>
+
+                        <form method="POST"
+                              action="{% url 'reject_booking' booking.id %}">
+                            {% csrf_token %}
+
+                            <button type="submit"
+                                    class="reject-btn"
+                                    onclick="return confirm('Are you sure you want to reject this booking?')">
+                                Reject
+                            </button>
+                        </form>
+
+                    </div>
+
+                {% elif booking.status == 'approved' and not booking.room %}
+
+                    <button type="button"
+                            class="allocate-btn"
+                            data-url="{% url 'allocate_room' booking.id %}"
+                            data-room-type="{{ booking.requested_room_type }}"
+                            data-student="{{ booking.student.user.username }}"
+                            onclick="openAllocationModal(this)">
+                        Allocate Room
+                    </button>
+
+{% elif booking.status == 'approved' and booking.room %}
+
+    <div class="action-buttons">
+
+        <span class="allocated-room">
+            Room {{ booking.room.room_number }}
+        </span>
+
+        <form method="POST"
+              action="{% url 'complete_booking' booking.id %}"
+              onsubmit="return confirm('Are you sure this student has vacated the hostel?')">
+
+            {% csrf_token %}
+
+            <button type="submit" class="complete-btn">
+                Complete Stay
+            </button>
+
+        </form>
+
+    </div>
+
+                {% else %}
+
+                    <span class="no-action">—</span>
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+    {% empty %}
+
+        <tr>
+            <td colspan="8" class="empty-message">
+                No booking requests found.
+            </td>
+        </tr>
+
+    {% endfor %}
+
+</tbody>
+
+
+        </table>
+
+    </div>
+
+  <!-- Room Allocation Popup -->
+
+<div id="allocationModal" class="modal-overlay">
+
+    <div class="modal-box">
+
+        <div class="modal-heading">
+            <h2>Allocate Room</h2>
+
+            <button type="button"
+                    class="close-btn"
+                    onclick="closeAllocationModal()">
+                &times;
+            </button>
+        </div>
+
+        <p class="modal-description">
+            Select an available room and allocation date for
+            <strong id="studentName"></strong>.
+        </p>
+
+        <form id="allocationForm" method="POST">
+
+            {% csrf_token %}
+
+            <div class="form-group">
+
+                <label for="room_id">Select Room Number</label>
+
+                <select name="room_id" id="room_id" required>
+
+                    <option value="">Choose a room</option>
+
+                    {% for room in available_rooms %}
+
+                        <option value="{{ room.id }}"
+                                data-room-type="{{ room.room_type }}">
+                            Room {{ room.room_number }}
+                            ({{ room.get_room_type_display }})
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="allocation_date">Allocation Date</label>
+
+                <input type="date"
+                       name="allocation_date"
+                       id="allocation_date"
+                       required>
+
+            </div>
+
+            <div class="modal-actions">
+
+                <button type="button"
+                        class="cancel-btn"
+                        onclick="closeAllocationModal()">
+                    Cancel
+                </button>
+
+                <button type="submit" class="confirm-btn">
+                    Confirm Allocation
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</div>
+
+<script>
+    function openAllocationModal(button) {
+
+        const modal = document.getElementById('allocationModal');
+        const form = document.getElementById('allocationForm');
+        const roomSelect = document.getElementById('room_id');
+        const allocationDate = document.getElementById('allocation_date');
+
+        const requestedType = button.dataset.roomType;
+
+        // Set the correct booking URL
+        form.action = button.dataset.url;
+
+        // Display student username
+        document.getElementById('studentName').textContent =
+            button.dataset.student;
+
+        // Show only rooms matching the requested type
+        roomSelect.value = '';
+
+        Array.from(roomSelect.options).forEach(option => {
+
+            if (!option.value) {
+                option.hidden = false;
+                return;
+            }
+
+            option.hidden =
+                option.dataset.roomType !== requestedType;
+
+        });
+
+        // Prevent selecting a past allocation date
+        const now = new Date();
+        const localToday = new Date(
+            now.getTime() - now.getTimezoneOffset() * 60000
+        ).toISOString().split('T')[0];
+
+        allocationDate.min = localToday;
+        allocationDate.value = localToday;
+
+        modal.style.display = 'flex';
+    }
+
+
+    function closeAllocationModal() {
+
+        document.getElementById('allocationModal').style.display = 'none';
+
+    }
+
+
+    // Close popup when clicking outside it
+    document.getElementById('allocationModal').addEventListener(
+        'click',
+        function(event) {
+
+            if (event.target === this) {
+                closeAllocationModal();
+            }
+
+        }
+    );
+</script>
+{% endblock %}

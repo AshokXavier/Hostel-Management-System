@@ -1,0 +1,335 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Room {{ room.room_number }} | Stay Mate{% endblock %}
+
+{% block content %}
+
+<style>
+    .room-details-page {
+        padding: 30px 5%;
+        background: #F1F5F9;
+        min-height: 80vh;
+        color: #283779;
+    }
+
+    .back-link {
+        display: inline-block;
+        color: #283779;
+        text-decoration: none;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .back-link:hover {
+        color: #2e4b93;
+    }
+
+    .room-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+    }
+
+    .room-heading h1 {
+        font-size: 28px;
+        margin-bottom: 5px;
+    }
+
+    .room-heading p {
+        color: #666;
+    }
+
+    .status {
+        padding: 7px 13px;
+        border-radius: 20px;
+        font-size: 13px;
+    }
+
+    .status.full {
+        background: #dcefe2;
+        color: #237342;
+    }
+
+    .status.partial {
+        background: #fff0d6;
+        color: #9a6500;
+    }
+
+    .status.empty {
+        background: #e8edf8;
+        color: #283779;
+    }
+
+    .details-card {
+        background: white;
+        padding: 22px;
+        border-radius: 9px;
+        margin-bottom: 22px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .details-card h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    .room-info-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+
+    .info-item p {
+        color: #777;
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+
+    .info-item h3 {
+        font-size: 16px;
+        color: #283779;
+        overflow-wrap: anywhere;
+    }
+
+    .facilities {
+        color: #555;
+        line-height: 1.6;
+        white-space: pre-line;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 650px;
+    }
+
+    th, td {
+        padding: 13px 12px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+    }
+
+    th {
+        background: #f5f6fa;
+        color: #283779;
+    }
+
+    td {
+        color: #555;
+    }
+
+    .student-link {
+        color: #283779;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .student-link:hover {
+        text-decoration: underline;
+    }
+
+    .empty-message {
+        text-align: center;
+        padding: 25px;
+        color: #777;
+    }
+
+    @media (max-width: 700px) {
+        .room-details-page {
+            padding: 20px 4%;
+        }
+
+        .room-info-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .details-card {
+            padding: 17px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .room-info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+
+<div class="room-details-page">
+
+    <a href="{% url 'admin_rooms' %}" class="back-link">
+        ← Back to Rooms
+    </a>
+
+
+    <!-- Room Heading -->
+    <div class="room-heading">
+
+        <div>
+            <h1>Room {{ room.room_number }}</h1>
+            <p>{{ room.get_room_type_display }}</p>
+        </div>
+
+        {% if occupancy_status == 'Full' %}
+            <span class="status full">Full</span>
+
+        {% elif occupancy_status == 'Partially Occupied' %}
+            <span class="status partial">Partially Occupied</span>
+
+        {% else %}
+            <span class="status empty">Empty</span>
+        {% endif %}
+
+    </div>
+
+
+    <!-- Room Information -->
+    <section class="details-card">
+
+        <h2>Room Information</h2>
+
+        <div class="room-info-grid">
+
+            <div class="info-item">
+                <p>Room Number</p>
+                <h3>{{ room.room_number }}</h3>
+            </div>
+
+            <div class="info-item">
+                <p>Room Type</p>
+                <h3>{{ room.get_room_type_display }}</h3>
+            </div>
+
+            <div class="info-item">
+                <p>Monthly Rent</p>
+                <h3>₹{{ room.monthly_rate }}</h3>
+            </div>
+
+            <div class="info-item">
+                <p>Total Capacity</p>
+                <h3>{{ room.capacity }} Students</h3>
+            </div>
+
+            <div class="info-item">
+                <p>Occupied Beds</p>
+                <h3>{{ occupied }}</h3>
+            </div>
+
+            <div class="info-item">
+                <p>Available Beds</p>
+                <h3>{{ available }}</h3>
+            </div>
+
+            <div class="info-item">
+                <p>Room Status</p>
+                <h3>
+                    {% if room.is_active %}
+                        Active
+                    {% else %}
+                        Inactive
+                    {% endif %}
+                </h3>
+            </div>
+
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+        <p style="color: #777; font-size: 13px; margin-bottom: 8px;">
+            Facilities
+        </p>
+
+        <div class="facilities">
+            {% if room.facilities %}
+                {{ room.facilities }}
+            {% else %}
+                No facilities information added.
+            {% endif %}
+        </div>
+
+    </section>
+
+
+    <!-- Current Residents -->
+    <section class="details-card">
+
+        <h2>Currently Allocated Students</h2>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Department</th>
+                        <th>Academic Year</th>
+                        <th>Allocation Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for booking in current_residents %}
+
+                    <tr>
+
+                        <td>
+                            {{ booking.student.user.username }}
+                        </td>
+
+                        <td>
+                            {{ booking.student.user.email }}
+                        </td>
+
+                        <td>
+                            {{ booking.student.phone }}
+                        </td>
+
+                        <td>
+                            {{ booking.student.department }}
+                        </td>
+
+                        <td>
+                            {{ booking.student.academic_year }}
+                        </td>
+
+                        <td>
+                            {{ booking.allocated_date|date:"d M Y" }}
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="6" class="empty-message">
+                            No students are currently allocated to this room.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

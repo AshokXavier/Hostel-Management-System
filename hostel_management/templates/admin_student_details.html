@@ -1,0 +1,432 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .details-page {
+        padding: 30px 4%;
+        background: #F1F5F9;
+        min-height: 85vh;
+    }
+
+    .page-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .page-heading h1 {
+        color: #283779;
+        font-size: 27px;
+        margin-bottom: 5px;
+    }
+
+    .page-heading p {
+        color: #64748B;
+        margin: 0;
+    }
+
+    .back-btn {
+        background: #283779;
+        color: white;
+        padding: 10px 17px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .back-btn:hover {
+        background: #2e4b93;
+    }
+
+    .details-card {
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        margin-bottom: 22px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .section-title {
+        color: #283779;
+        font-size: 19px;
+        margin-bottom: 20px;
+    }
+
+    .student-header {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 25px;
+    }
+
+    .student-avatar {
+        width: 65px;
+        height: 65px;
+        border-radius: 50%;
+        background: #E0E7FF;
+        color: #283779;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 25px;
+        font-weight: 600;
+    }
+
+    .student-header h2 {
+        color: #283779;
+        margin: 0 0 5px;
+        font-size: 21px;
+    }
+
+    .student-header p {
+        color: #64748B;
+        margin: 0;
+        font-size: 14px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+
+    .info-item label {
+        display: block;
+        color: #64748B;
+        font-size: 13px;
+        margin-bottom: 7px;
+    }
+
+    .info-item p {
+        color: #334155;
+        font-size: 15px;
+        font-weight: 500;
+        margin: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 6px 13px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .staying {
+        background: #DCFCE7;
+        color: #166534;
+    }
+
+    .pending {
+        background: #FEF3C7;
+        color: #92400E;
+    }
+
+    .allocated {
+        background: #DBEAFE;
+        color: #1E40AF;
+    }
+
+    .not-allocated {
+        background: #F1F5F9;
+        color: #475569;
+    }
+
+    .booking-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 650px;
+    }
+
+    .booking-table th {
+        background: #F1F5F9;
+        color: #475569;
+        text-align: left;
+        padding: 13px;
+        font-size: 13px;
+    }
+
+    .booking-table td {
+        padding: 14px 13px;
+        border-bottom: 1px solid #E2E8F0;
+        color: #334155;
+        font-size: 14px;
+    }
+
+    .booking-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .empty-message {
+        text-align: center;
+        padding: 25px;
+        color: #64748B;
+    }
+
+    @media (max-width: 750px) {
+        .info-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 500px) {
+        .details-page {
+            padding: 20px 4%;
+        }
+
+        .details-card {
+            padding: 18px;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+
+<div class="details-page">
+
+    <!-- Heading -->
+
+    <div class="page-heading">
+
+        <div>
+            <h1>Student Details</h1>
+            <p>View student information and accommodation records.</p>
+        </div>
+
+        <a href="{% url 'admin_students' %}" class="back-btn">
+            Back to Students
+        </a>
+
+    </div>
+
+
+    <!-- Personal Information -->
+
+    <div class="details-card">
+
+        <div class="student-header">
+
+            <div class="student-avatar">
+                {{ student.user.username|first|upper }}
+            </div>
+
+            <div>
+                <h2>
+                    {{ student.user.get_full_name|default:student.user.username }}
+                </h2>
+
+                <p>@{{ student.user.username }}</p>
+            </div>
+
+        </div>
+
+        <h3 class="section-title">Personal Information</h3>
+
+        <div class="info-grid">
+
+            <div class="info-item">
+                <label>Username</label>
+                <p>{{ student.user.username }}</p>
+            </div>
+
+            <div class="info-item">
+                <label>Email Address</label>
+                <p>{{ student.user.email|default:"Not provided" }}</p>
+            </div>
+
+            <div class="info-item">
+                <label>Phone Number</label>
+                <p>{{ student.phone }}</p>
+            </div>
+
+            <div class="info-item">
+                <label>Department</label>
+                <p>{{ student.department }}</p>
+            </div>
+
+            <div class="info-item">
+                <label>Academic Year</label>
+                <p>{{ student.academic_year }}</p>
+            </div>
+
+            <div class="info-item">
+                <label>Registration Date</label>
+                <p>{{ student.user.date_joined|date:"d M Y" }}</p>
+            </div>
+
+            <div class="info-item">
+                <label>Accommodation Status</label>
+
+                <p>
+                    {% if accommodation_status == 'Staying' %}
+                        <span class="status staying">Staying</span>
+
+                    {% elif accommodation_status == 'Pending' %}
+                        <span class="status pending">Pending</span>
+
+                    {% elif accommodation_status == 'Allocated' %}
+                        <span class="status allocated">Allocated</span>
+
+                    {% else %}
+                        <span class="status not-allocated">
+                            Not Allocated
+                        </span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="info-item">
+                <label>Address</label>
+                <p>{{ student.address }}</p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Current Accommodation -->
+
+    <div class="details-card">
+
+        <h3 class="section-title">Current Accommodation</h3>
+
+        {% if current_booking %}
+
+            <div class="info-grid">
+
+                <div class="info-item">
+                    <label>Room Number</label>
+                    <p>{{ current_booking.room.room_number }}</p>
+                </div>
+
+                <div class="info-item">
+                    <label>Room Type</label>
+                    <p>{{ current_booking.room.get_room_type_display }}</p>
+                </div>
+
+                <div class="info-item">
+                    <label>Monthly Rate</label>
+                    <p>
+                        ₹{{ current_booking.monthly_rate_at_allocation|default:current_booking.room.monthly_rate }}
+                    </p>
+                </div>
+
+                <div class="info-item">
+                    <label>Allocation Date</label>
+                    <p>{{ current_booking.allocated_date|date:"d M Y" }}</p>
+                </div>
+
+                <div class="info-item">
+                    <label>Vacated Date</label>
+                    <p>
+                        {{ current_booking.vacated_date|date:"d M Y"|default:"Currently Staying" }}
+                    </p>
+                </div>
+
+            </div>
+
+        {% elif pending_booking %}
+
+            <p>
+                This student has a pending booking request for
+                <strong>{{ pending_booking.get_requested_room_type_display }}</strong>.
+            </p>
+
+        {% else %}
+
+            <p class="empty-message">
+                This student does not currently have an allocated room.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- Booking History -->
+
+    <div class="details-card">
+
+        <h3 class="section-title">Booking History</h3>
+
+        <div class="table-wrapper">
+
+            <table class="booking-table">
+
+                <thead>
+                    <tr>
+                        <th>Requested Date</th>
+                        <th>Requested Room Type</th>
+                        <th>Allocated Room</th>
+                        <th>Allocation Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for booking in bookings %}
+
+                        <tr>
+
+                            <td>
+                                {{ booking.requested_date|date:"d M Y" }}
+                            </td>
+
+                            <td>
+                                {{ booking.get_requested_room_type_display }}
+                            </td>
+
+                            <td>
+                                {% if booking.room %}
+                                    {{ booking.room.room_number }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ booking.allocated_date|date:"d M Y"|default:"-" }}
+                            </td>
+
+                            <td>
+                                {{ booking.get_status_display }}
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="5" class="empty-message">
+                                No booking history available.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

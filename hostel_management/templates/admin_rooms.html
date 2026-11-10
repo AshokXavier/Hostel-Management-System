@@ -1,0 +1,355 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Manage Rooms | Stay Mate{% endblock %}
+
+{% block content %}
+
+<style>
+    .rooms-page {
+        padding: 30px 5%;
+        background: #F1F5F9;
+        min-height: 80vh;
+        color: #283779;
+    }
+
+    .page-heading {
+        margin-bottom: 25px;
+    }
+
+    .page-heading h1 {
+        font-size: 30px;
+        margin-bottom: 6px;
+    }
+
+    .page-heading p {
+        color: #666;
+    }
+
+    /* Statistics */
+    .room-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 9px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .stat-card p {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 9px;
+    }
+
+    .stat-card h2 {
+        font-size: 27px;
+    }
+
+    /* Main Content */
+    .rooms-content {
+        background: white;
+        padding: 22px;
+        border-radius: 9px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .rooms-content h2 {
+        font-size: 21px;
+        margin-bottom: 18px;
+    }
+
+    /* Filters */
+    .filter-form {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .filter-form input,
+    .filter-form select {
+        padding: 10px 12px;
+        border: 1px solid #d5d9e2;
+        border-radius: 6px;
+        outline: none;
+        font-size: 14px;
+    }
+
+    .filter-form input {
+        flex: 1;
+        min-width: 180px;
+    }
+
+    .filter-form select {
+        min-width: 150px;
+        background: white;
+    }
+
+    .filter-form input:focus,
+    .filter-form select:focus {
+        border-color: #283779;
+    }
+
+    .filter-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        background: #283779;
+        color: white;
+        cursor: pointer;
+    }
+
+    .filter-btn:hover {
+        background: #2e4b93;
+    }
+
+    .reset-btn {
+        padding: 10px 15px;
+        border: 1px solid #283779;
+        border-radius: 6px;
+        color: #283779;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .reset-btn:hover {
+        background: #e8edf8;
+    }
+
+    /* Table */
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 650px;
+    }
+
+    th, td {
+        padding: 13px 12px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+    }
+
+    th {
+        background: #f5f6fa;
+        color: #283779;
+        font-weight: 600;
+    }
+
+    td {
+        color: #555;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+    }
+
+    .status.full {
+        background: #dcefe2;
+        color: #237342;
+    }
+
+    .status.partial {
+        background: #fff0d6;
+        color: #9a6500;
+    }
+
+    .status.empty {
+        background: #e8edf8;
+        color: #283779;
+    }
+
+    .inactive-label {
+        color: #b42318;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+
+    .view-btn {
+        color: #283779;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .view-btn:hover {
+        color: #2e4b93;
+        text-decoration: underline;
+    }
+
+    .empty-message {
+        text-align: center;
+        padding: 25px;
+        color: #777;
+    }
+
+ 
+
+    @media (max-width: 600px) {
+        .rooms-page {
+            padding: 20px 4%;
+        }
+
+        .rooms-content {
+            padding: 15px;
+        }
+
+        .filter-form {
+            flex-direction: column;
+        }
+
+        .filter-form input,
+        .filter-form select,
+        .filter-btn,
+        .reset-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+
+<div class="rooms-page">
+
+    <!-- Page Heading -->
+    <div class="page-heading">
+        <h1>Room Management</h1>
+        <p>View and manage hostel rooms and their occupancy.</p>
+    </div>
+
+
+    <!-- Statistics -->
+
+
+    <!-- Room List -->
+    <div class="rooms-content">
+
+        <h2>All Rooms</h2>
+
+        <!-- Search and Filters -->
+        <form method="GET" class="filter-form">
+
+            <input
+                type="text"
+                name="search"
+                placeholder="Search room number..."
+                value="{{ search_query }}"
+            >
+
+            <select name="room_type">
+                <option value="">All Room Types</option>
+
+                <option value="dormitory"
+                    {% if selected_type == 'dormitory' %}selected{% endif %}>
+                    Dormitory
+                </option>
+
+                <option value="twin"
+                    {% if selected_type == 'twin' %}selected{% endif %}>
+                    Twin Bed
+                </option>
+            </select>
+
+            <button type="submit" class="filter-btn">
+                Search
+            </button>
+
+            <a href="{% url 'admin_rooms' %}" class="reset-btn">
+                Reset
+            </a>
+
+        </form>
+
+
+        <!-- Room Table -->
+        <div class="table-wrapper">
+
+          <table>
+
+            <thead>
+                <tr>
+                    <th>Room No.</th>
+                    <th>Room Type</th>
+                    <th>Capacity</th>
+                    <th>Occupied</th>
+                    <th>Available</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for room in rooms %}
+
+                <tr>
+
+                    <td>
+                        {{ room.room_number }}
+                        {% if not room.is_active %}
+                            <span class="inactive-label">Inactive</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ room.get_room_type_display }}</td>
+
+                    <td>{{ room.capacity }}</td>
+
+                    <td>{{ room.occupied }}</td>
+
+                    <td>{{ room.available }}</td>
+
+                    <td>
+                        {% if room.occupancy_status == 'Full' %}
+                            <span class="status full">Full</span>
+
+                        {% elif room.occupancy_status == 'Partially Occupied' %}
+                            <span class="status partial">Partial</span>
+
+                        {% else %}
+                            <span class="status empty">Empty</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <a
+                            href="{% url 'admin_room_details' room.id %}"
+                            class="view-btn">
+                            View Details
+                        </a>
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="7" class="empty-message">
+                        No rooms found.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

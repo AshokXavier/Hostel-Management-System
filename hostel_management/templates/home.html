@@ -1,0 +1,303 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home | Stay Mate{% endblock %}
+
+{% block content %}
+
+<style>
+    .home-container {
+        color: #283779;
+    }
+
+ 
+    /* Hero Section */
+    .hero {
+        padding: 40px 8%;
+        text-align: center;
+        background-color: #e8edf8;
+    }
+
+    .hero h1 {
+        font-size: 36px;
+        margin-bottom: 10px;
+    }
+
+    .hero p {
+        font-size: 16px;
+        line-height: 1.6;
+        max-width: 700px;
+        margin: 0 auto 18px;
+        color: #555;
+    }
+
+    .hero-buttons a {
+        display: inline-block;
+        padding: 12px 25px;
+        margin: 8px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .primary-btn {
+        background-color: #283779;
+        color: white;
+    }
+
+    .secondary-btn {
+        border: 1px solid #283779;
+        color: #283779;
+    }
+
+    .hero-buttons a:hover {
+        background-color: #2e4b93;
+        color: white;
+    }
+
+    /* Common Sections */
+/* Common Sections */
+    .home-section {
+        padding: 30px 8%;
+        text-align: center;
+    }
+
+    .section-heading {
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+
+    .section-description {
+        color: #666;
+        line-height: 1.6;
+        max-width: 750px;
+        margin: 0 auto 20px;
+    }
+
+
+    /* Accommodation Cards */
+    .room-preview-container {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .room-preview-card {
+        background-color: white;
+        width: 350px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        text-align: left;
+    }
+
+    .room-preview-card img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+    }
+
+    .room-preview-content {
+        padding: 15px;
+    }
+
+    .room-preview-content h3 {
+        margin-bottom: 10px;
+    }
+
+    .room-preview-content p {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .room-preview-content a {
+        display: inline-block;
+        margin-top: 10px;
+        color: #283779;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    /* Features */
+    .features-section {
+        background-color: #e8edf8;
+    }
+
+    .features-container {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .feature-card {
+        background-color: white;
+        padding: 18px;
+        border-radius: 8px;
+        width: 220px;
+    }
+
+    .feature-card h3 {
+        margin-bottom: 12px;
+    }
+
+    .feature-card p {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    /* Get Started */
+    .get-started {
+        padding: 30px 8%;
+        text-align: center;
+    }
+
+    .get-started p {
+        color: #666;
+        margin: 10px 0 18px;
+    }
+
+    @media (max-width: 600px) {
+        .hero {
+            padding: 30px 5%;
+        }
+
+        .hero h1 {
+            font-size: 28px;
+        }
+
+        .home-section {
+            padding: 25px 5%;
+        }
+
+        .room-preview-card {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="home-container">
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Welcome to Stay Mate</h1>
+
+        <p>
+            Your comfortable stay starts here. Explore accommodation
+            options, submit booking requests and manage your hostel
+            experience easily through one platform.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="{% url 'register' %}" class="primary-btn">
+                Get Started
+            </a>
+
+        </div>
+    </section>
+
+
+    <!-- Accommodation Preview -->
+    <section class="home-section">
+        <h2 class="section-heading">Our Accommodation</h2>
+
+        <p class="section-description">
+            Choose the accommodation type that best suits your needs.
+        </p>
+
+        <div class="room-preview-container">
+
+            <div class="room-preview-card">
+                <img src="{% static 'images/dormitory-1.webp' %}"
+                     alt="Dormitory Room">
+
+                <div class="room-preview-content">
+                    <h3>Dormitory</h3>
+
+                    <p>
+                        A shared accommodation option designed for
+                        students who prefer a comfortable and
+                        budget-friendly stay.
+                    </p>
+
+                </div>
+            </div>
+
+
+            <div class="room-preview-card">
+                <img src="{% static 'images/twin-1.jpeg' %}"
+                     alt="Twin Bed Room">
+
+                <div class="room-preview-content">
+                    <h3>Twin Bed</h3>
+
+                    <p>
+                        A shared room with two beds, offering a
+                        comfortable accommodation option for
+                        students.
+                    </p>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- Features Section -->
+    <section class="home-section features-section">
+        <h2 class="section-heading">Why Choose Stay Mate?</h2>
+
+        <p class="section-description">
+            Manage your hostel accommodation with simple and
+            convenient features.
+        </p>
+
+        <div class="features-container">
+
+            <div class="feature-card">
+                <h3>Easy Booking</h3>
+                <p>
+                    Submit room booking requests easily through
+                    the website.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <h3>Booking Tracking</h3>
+                <p>
+                    Keep track of your booking status and
+                    accommodation details.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <h3>Student Profile</h3>
+                <p>
+                    View and update your personal information
+                    whenever required.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- Get Started Section -->
+    <section class="get-started">
+        <h2 class="section-heading">Ready to Get Started?</h2>
+
+        <p>
+            Join Stay Mate and make managing your hostel stay easier.
+        </p>
+
+        <a href="{% url 'register' %}" class="primary-btn">
+            Register Now
+        </a>
+    </section>
+
+</div>
+
+{% endblock %}
