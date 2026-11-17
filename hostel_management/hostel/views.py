@@ -504,6 +504,7 @@ def admin_room_details(request, room_id):
 
 
 
+
 @login_required
 @user_passes_test(lambda user: user.is_staff, login_url='login')
 def admin_students(request):
@@ -521,6 +522,7 @@ def admin_students(request):
     currently_staying = 0
     pending_student_count = 0
     not_allocated = 0
+    completed_students = 0
 
     # Determine each student's accommodation status
     for student in all_students:
@@ -552,6 +554,11 @@ def admin_students(request):
             and booking.allocated_date > today
         ]
 
+        completed_bookings = [
+            booking for booking in bookings
+            if booking.status == 'completed'
+        ]
+
         if current_bookings:
             student.accommodation_status = 'Staying'
             student.current_booking = current_bookings[-1]
@@ -565,6 +572,11 @@ def admin_students(request):
         elif future_bookings:
             student.accommodation_status = 'Allocated'
             student.current_booking = future_bookings[-1]
+
+        elif completed_bookings:
+            student.accommodation_status = 'Completed'
+            student.current_booking = completed_bookings[-1]
+            completed_students += 1
 
         else:
             student.accommodation_status = 'Not Allocated'
@@ -611,6 +623,7 @@ def admin_students(request):
             status='pending'
         ).count(),
         'not_allocated': not_allocated,
+        'completed_students': completed_students,
         'search_query': search_query,
         'selected_department': selected_department,
         'selected_status': selected_status,
@@ -670,6 +683,10 @@ def admin_student_details(request, student_id):
 
         if future_booking:
             accommodation_status = 'Allocated'
+
+        elif bookings.filter(status='completed').exists():
+            accommodation_status = 'Completed'
+
         else:
             accommodation_status = 'Not Allocated'
 

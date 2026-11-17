@@ -247,6 +247,11 @@
 .view-btn:hover {
     background: #2e4b93;
 }
+
+.completed {
+    background-color: #DBEAFE;
+    color: #1E40AF;
+}
 </style>
 
 
@@ -398,6 +403,9 @@
 
                             {% elif student.accommodation_status == 'Allocated' %}
                                 <span class="status allocated">Allocated</span>
+
+                            {% elif student.accommodation_status == 'Completed' %}
+                                <span class="status completed">Completed</span>
 
                             {% else %}
                                 <span class="status not-allocated">

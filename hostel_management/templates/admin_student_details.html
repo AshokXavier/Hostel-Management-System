@@ -192,6 +192,11 @@
             grid-template-columns: 1fr;
         }
     }
+
+    .completed {
+    background-color: #DBEAFE;
+    color: #1E40AF;
+}
 </style>
 
 
@@ -279,6 +284,9 @@
 
                     {% elif accommodation_status == 'Allocated' %}
                         <span class="status allocated">Allocated</span>
+
+                    {% elif accommodation_status == 'Completed' %}
+                        <span class="status completed">Completed</span>
 
                     {% else %}
                         <span class="status not-allocated">
